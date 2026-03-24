@@ -1,0 +1,52 @@
+{
+  "id": "data-table",
+  "order": 2,
+  "title": "数据表",
+  "summary": "适用于：任务列表、订单明细、对比多行数据。",
+  "schema": {
+    "type": "object",
+    "required": ["columns", "rows"],
+    "additionalProperties": false,
+    "properties": {
+      "columns": {
+        "type": "array",
+        "minItems": 1,
+        "description": "表头列定义，至少一列",
+        "items": {
+          "type": "object",
+          "required": ["key", "label"],
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": "string",
+              "description": "与 rows 中对象字段名对应"
+            },
+            "label": {
+              "type": "string",
+              "description": "列标题"
+            }
+          }
+        }
+      },
+      "rows": {
+        "type": "array",
+        "description": "数据行，每项为对象，键与 columns[].key 对应",
+        "items": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  },
+  "example": {
+    "columns": [
+      { "key": "name", "label": "任务" },
+      { "key": "status", "label": "状态" }
+    ],
+    "rows": [
+      { "name": "同步库存", "status": "进行中" },
+      { "name": "对账", "status": "已完成" }
+    ]
+  },
+  "routingHint": "用户说「用表格列出」「做个表」「对比这几项」→ 用 data-table。"
+}

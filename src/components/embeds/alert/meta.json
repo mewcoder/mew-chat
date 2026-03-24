@@ -1,0 +1,33 @@
+{
+  "id": "alert",
+  "order": 3,
+  "title": "提示条",
+  "summary": "适用于：配额预警、操作结果、注意事项。",
+  "schema": {
+    "type": "object",
+    "required": ["message"],
+    "additionalProperties": false,
+    "properties": {
+      "message": {
+        "type": "string",
+        "minLength": 1,
+        "description": "主文案，必填"
+      },
+      "title": {
+        "type": "string",
+        "description": "可选标题"
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["info", "success", "warning", "error"],
+        "description": "样式；省略时前端按 info 处理"
+      }
+    }
+  },
+  "example": {
+    "variant": "warning",
+    "title": "配额提醒",
+    "message": "API 调用量已用 85%，建议关注。"
+  },
+  "routingHint": "用户说「提醒一下」「注意」「警告」「成功提示」→ 用 alert。"
+}

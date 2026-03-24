@@ -1,0 +1,37 @@
+{
+  "id": "kpi",
+  "order": 1,
+  "title": "指标卡",
+  "summary": "适用于：今日订单量、活跃用户数、同比等单指标展示。",
+  "schema": {
+    "type": "object",
+    "required": ["title", "value"],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "指标名称"
+      },
+      "value": {
+        "type": ["string", "number"],
+        "description": "当前值"
+      },
+      "hint": {
+        "type": "string",
+        "description": "可选副说明，如环比文案"
+      },
+      "trend": {
+        "type": "string",
+        "enum": ["up", "down", "neutral"],
+        "description": "涨跌提示；neutral 或不写则不显示箭头"
+      }
+    }
+  },
+  "example": {
+    "title": "今日订单",
+    "value": 1280,
+    "hint": "较昨日 +12%",
+    "trend": "up"
+  },
+  "routingHint": "用户说「关键指标」「今日数据」「大屏数字」→ 用 kpi。"
+}

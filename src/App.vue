@@ -57,7 +57,7 @@ function openSettings(): void {
       ref="scrollRoot"
       class="min-h-0 flex-1 overflow-y-auto scroll-smooth overscroll-y-contain"
     >
-      <ChatMessageList :messages="messages" />
+      <ChatMessageList :messages="messages" :streaming="streaming" />
     </div>
     <ChatInput
       :disabled="configInvalid"

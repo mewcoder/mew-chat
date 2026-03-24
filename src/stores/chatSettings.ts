@@ -1,8 +1,12 @@
 import { ref, computed, watch } from 'vue'
 import { defineStore } from 'pinia'
+import { DEFAULT_SYSTEM_PROMPT } from '../constants/embedSystemPrompt'
 import type { ChatSettingsState } from '../types/chat'
 
 const STORAGE_KEY = 'mewchat-settings'
+
+/** 仅一次：老版本曾持久化空系统提示时，自动填入内置围栏说明 */
+const MIGRATE_EMPTY_SYSTEM_PROMPT_KEY = 'mewchat-migrate-embed-default-v1'
 
 function normalizeBaseUrl(url: string): string {
   const t = url.trim()
@@ -14,7 +18,7 @@ const defaultState = (): ChatSettingsState => ({
   baseUrl: 'https://api.openai.com',
   apiKey: '',
   model: 'gpt-4o-mini',
-  systemPrompt: '',
+  systemPrompt: DEFAULT_SYSTEM_PROMPT,
   useStream: true,
 })
 
@@ -23,7 +27,7 @@ export const useChatSettingsStore = defineStore('chatSettings', () => {
   const baseUrl = ref('')
   const apiKey = ref('')
   const model = ref('')
-  const systemPrompt = ref('')
+  const systemPrompt = ref(DEFAULT_SYSTEM_PROMPT)
   const useStream = ref(true)
 
   const normalizedBaseUrl = computed(() => normalizeBaseUrl(baseUrl.value))
@@ -51,8 +55,13 @@ export const useChatSettingsStore = defineStore('chatSettings', () => {
       )
       apiKey.value = typeof parsed.apiKey === 'string' ? parsed.apiKey : d.apiKey
       model.value = typeof parsed.model === 'string' ? parsed.model : d.model
-      systemPrompt.value =
+      let nextPrompt =
         typeof parsed.systemPrompt === 'string' ? parsed.systemPrompt : d.systemPrompt
+      if (nextPrompt.trim() === '' && !localStorage.getItem(MIGRATE_EMPTY_SYSTEM_PROMPT_KEY)) {
+        nextPrompt = DEFAULT_SYSTEM_PROMPT
+        localStorage.setItem(MIGRATE_EMPTY_SYSTEM_PROMPT_KEY, '1')
+      }
+      systemPrompt.value = nextPrompt
       useStream.value =
         typeof parsed.useStream === 'boolean' ? parsed.useStream : d.useStream
     } catch {
