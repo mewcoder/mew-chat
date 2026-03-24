@@ -27,7 +27,9 @@ function segmentKey(seg: ChatSegment, index: number): string {
 </script>
 
 <template>
-  <div class="chat-md chat-md-assistant space-y-4">
+  <div
+    class="chat-md-assistant prose prose-stone prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-orange-600 dark:prose-a:text-orange-400 space-y-4"
+  >
     <template v-for="(seg, i) in segments" :key="segmentKey(seg, i)">
       <div
         v-if="seg.type === 'html'"
