@@ -15,9 +15,10 @@ const props = defineProps<{
 
 const segments = computed(() => parseChatMarkdown(props.content))
 
+/** 必须与流式内容长度解耦，否则每增一字 :key 即变，会整段销毁/重建 v-html 导致闪动 */
 function segmentKey(seg: ChatSegment, index: number): string {
   if (seg.type === 'html') {
-    return `h-${index}-${seg.html.length}`
+    return `h-${index}`
   }
   if (seg.type === 'embed-pending') {
     return `p-${index}-${seg.lang}`
