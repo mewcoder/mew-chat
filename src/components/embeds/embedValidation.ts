@@ -125,6 +125,39 @@ function normalizePartialDataTable(o: Record<string, unknown>): Record<string, u
   return { columns, rows }
 }
 
+function normalizePartialEcharts(o: Record<string, unknown>): Record<string, unknown> {
+  const title = typeof o.title === 'string' ? o.title : undefined
+  let height: number | undefined
+  if (typeof o.height === 'number' && o.height >= 120 && o.height <= 900) {
+    height = o.height
+  }
+  let option: Record<string, unknown> = {}
+  if (o.option && typeof o.option === 'object' && !Array.isArray(o.option)) {
+    try {
+      option = JSON.parse(JSON.stringify(o.option)) as Record<string, unknown>
+    } catch {
+      option = {}
+    }
+  }
+  if (Object.keys(option).length === 0) {
+    option = {
+      title: {
+        text: '\u2026',
+        left: 'center',
+        top: 'middle',
+        textStyle: { color: '#a8a29e', fontSize: 14 },
+      },
+      xAxis: { type: 'category', show: false, data: [] },
+      yAxis: { type: 'value', show: false },
+      series: [],
+    }
+  }
+  const out: Record<string, unknown> = { option }
+  if (title !== undefined) out.title = title
+  if (height !== undefined) out.height = height
+  return out
+}
+
 function normalizePartialEmbedProps(
   id: string,
   o: Record<string, unknown>,
@@ -136,6 +169,8 @@ function normalizePartialEmbedProps(
       return normalizePartialAlert(o)
     case 'data-table':
       return normalizePartialDataTable(o)
+    case 'echarts':
+      return normalizePartialEcharts(o)
     default:
       return null
   }

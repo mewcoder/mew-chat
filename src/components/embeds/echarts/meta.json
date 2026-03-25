@@ -1,0 +1,47 @@
+{
+  "id": "echarts",
+  "order": 4,
+  "title": "ECharts 图表",
+  "summary": "适用于：折线/柱状/饼图等统计图；围栏内 `option` 为 ECharts 官方 option 对象（与 setOption 一致）。",
+  "schema": {
+    "type": "object",
+    "required": ["option"],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "可选：图表上方说明标题（非 ECharts 内置 title）"
+      },
+      "height": {
+        "type": "number",
+        "minimum": 120,
+        "maximum": 900,
+        "description": "图表区域高度（像素），默认 320"
+      },
+      "option": {
+        "type": "object",
+        "description": "ECharts option，见 https://echarts.apache.org/zh/option.html"
+      }
+    }
+  },
+  "example": {
+    "title": "一周访问",
+    "height": 280,
+    "option": {
+      "tooltip": { "trigger": "axis" },
+      "xAxis": {
+        "type": "category",
+        "data": ["周一", "周二", "周三", "周四", "周五"]
+      },
+      "yAxis": { "type": "value" },
+      "series": [
+        {
+          "name": "访问量",
+          "type": "bar",
+          "data": [120, 200, 150, 80, 210]
+        }
+      ]
+    }
+  },
+  "routingHint": "用户要「趋势图」「柱状图」「饼图」「可视化对比」→ 用 echarts 围栏输出 option。"
+}
