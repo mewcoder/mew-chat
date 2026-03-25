@@ -1,0 +1,57 @@
+{
+  "id": "chart-bar",
+  "order": 5,
+  "title": "柱状图",
+  "summary": "适用于：分类对比、简单排行、按天/周统计。仅需 `items`（`name` + `value`），纵轴名称可用 `unit`；无需 ECharts option。",
+  "schema": {
+    "type": "object",
+    "required": ["items"],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "可选：图表上方说明标题"
+      },
+      "height": {
+        "type": "number",
+        "minimum": 120,
+        "maximum": 900,
+        "description": "图表区域高度（像素），默认 320"
+      },
+      "unit": {
+        "type": "string",
+        "description": "可选：数值轴名称，如「人次」「万元」"
+      },
+      "horizontal": {
+        "type": "boolean",
+        "description": "是否横向柱状图，默认 false"
+      },
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "required": ["name", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string", "description": "分类名称（横轴或纵轴标签）" },
+            "value": { "type": "number", "description": "柱高对应的数值" }
+          }
+        }
+      }
+    }
+  },
+  "example": {
+    "title": "一周访问量",
+    "height": 280,
+    "unit": "次",
+    "items": [
+      { "name": "周一", "value": 120 },
+      { "name": "周二", "value": 200 },
+      { "name": "周三", "value": 150 },
+      { "name": "周四", "value": 80 },
+      { "name": "周五", "value": 210 }
+    ]
+  },
+  "routingHint": "用户要「柱状图」「条形图」「对比柱子」「按类目统计」→ 用 chart-bar 输出 items；横向对比可设 horizontal: true。"
+}

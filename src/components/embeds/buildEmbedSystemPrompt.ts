@@ -27,7 +27,10 @@ export function loadEmbedMetas(): EmbedMeta[] {
   )
 }
 
-export function formatFenceExample(id: string, example: EmbedMeta['example']): string {
+export function formatFenceExample(
+  id: string,
+  example: EmbedMeta['example'],
+): string {
   if (example === undefined) return ''
   const body = JSON.stringify(example, null, 2)
   return '```' + id + '\n' + body + '\n```'

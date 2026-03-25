@@ -6,7 +6,7 @@ const emit = defineEmits<{
 
 <template>
   <header
-    class="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-stone-200/70 bg-[#faf8f5]/80 px-4 shadow-ui-hairline backdrop-blur-md dark:border-stone-700/70 dark:bg-[#1c1917]/80"
+    class="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-stone-200/70 bg-[#faf8f5]/80 px-4 shadow-ui-hairline backdrop-blur-md"
   >
     <div class="flex min-w-0 items-center gap-2.5">
       <img
@@ -14,22 +14,22 @@ const emit = defineEmits<{
         alt=""
         width="36"
         height="36"
-        class="size-9 shrink-0 shadow-ui-md ring-1 ring-white/20 dark:ring-white/10"
+        class="size-9 shrink-0 shadow-ui-md ring-1 ring-white/20"
         aria-hidden="true"
         decoding="async"
       />
       <div class="min-w-0">
         <h1
-          class="select-none truncate text-[15px] font-semibold tracking-tight text-stone-900 dark:text-stone-100"
+          class="select-none truncate text-[15px] font-semibold tracking-tight text-stone-900"
         >
           MewChat
         </h1>
-        <p class="hidden text-[11px] text-stone-500 sm:block dark:text-stone-400">本地对话界面</p>
+        <p class="hidden text-[11px] text-stone-500 sm:block">本地对话界面</p>
       </div>
     </div>
     <button
       type="button"
-      class="rounded-lg border border-stone-200/80 bg-white/60 px-3.5 py-2 text-[13px] font-medium text-stone-600 shadow-ui-sm transition hover:border-orange-200/80 hover:bg-orange-50/90 hover:text-stone-900 dark:border-stone-600/80 dark:bg-stone-800/60 dark:text-stone-300 dark:hover:border-orange-900/50 dark:hover:bg-stone-800 dark:hover:text-stone-100"
+      class="rounded-lg border border-stone-200/80 bg-white/60 px-3.5 py-2 text-[13px] font-medium text-stone-600 shadow-ui-sm transition hover:border-orange-200/80 hover:bg-orange-50/90 hover:text-stone-900"
       @click="emit('open-settings')"
     >
       模型配置

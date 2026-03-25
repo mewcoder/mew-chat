@@ -7,6 +7,7 @@ import {
   withRenderQueue,
   type RenderQueue,
 } from '../utils/renderQueue'
+import { DEFAULT_SYSTEM_PROMPT } from '../constants/embedSystemPrompt'
 
 // ---------------------------------------------------------------------------
 // 与 OpenAI 兼容的 Chat Completions API（/v1/chat/completions）
@@ -216,8 +217,7 @@ export function useChat() {
   const {
     normalizedBaseUrl,
     apiKey,
-    model,
-    effectiveSystemPrompt,
+    currentApiModel: model,
   } = storeToRefs(settingsStore)
 
   const messages = ref<ChatMessage[]>([])
@@ -256,7 +256,7 @@ export function useChat() {
           apiKey: apiKey.value,
           model: model.value,
           thread: messages.value,
-          systemPrompt: effectiveSystemPrompt.value,
+          systemPrompt: DEFAULT_SYSTEM_PROMPT,
           signal,
           onTextDelta(chunk) {
             renderQueue.push(chunk)

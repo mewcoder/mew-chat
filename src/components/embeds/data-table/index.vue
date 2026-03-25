@@ -28,18 +28,18 @@ function cellText(row: Record<string, unknown>, key: string): string {
 
 <template>
   <div
-    class="overflow-x-auto rounded-xl border border-stone-200/90 bg-[var(--surface-elevated)] shadow-ui-sm dark:border-stone-600 dark:bg-stone-900/80"
+    class="overflow-x-auto rounded-xl border border-stone-200/90 bg-[var(--surface-elevated)] shadow-ui-sm"
     role="region"
     aria-label="数据表"
   >
     <table class="w-full min-w-[16rem] border-collapse text-left text-[13px]">
       <thead>
-        <tr class="border-b border-stone-200/90 dark:border-stone-600">
+        <tr class="border-b border-stone-200/90">
           <th
             v-for="col in safeColumns"
             :key="col.key"
             scope="col"
-            class="whitespace-nowrap px-3 py-2 font-semibold text-stone-700 dark:text-stone-200"
+            class="whitespace-nowrap px-3 py-2 font-semibold text-stone-700"
           >
             {{ col.label }}
           </th>
@@ -49,12 +49,12 @@ function cellText(row: Record<string, unknown>, key: string): string {
         <tr
           v-for="(row, ri) in rows"
           :key="ri"
-          class="border-b border-stone-100 last:border-0 dark:border-stone-700/80"
+          class="border-b border-stone-100 last:border-0"
         >
           <td
             v-for="col in safeColumns"
             :key="col.key"
-            class="max-w-[20rem] px-3 py-2 align-top text-stone-800 dark:text-stone-200"
+            class="max-w-[20rem] px-3 py-2 align-top text-stone-800"
           >
             <span class="break-words">{{ cellText(row, col.key) }}</span>
           </td>

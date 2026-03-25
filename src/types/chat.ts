@@ -5,10 +5,16 @@ export interface ChatMessage {
   content: string
 }
 
+/** 显示名可自定义；modelId 为唯一键及 API 请求中的模型标识 */
+export interface ModelPreset {
+  name: string
+  modelId: string
+}
+
 export interface ChatSettingsState {
   baseUrl: string
   apiKey: string
-  model: string
-  /** 仅用户追加片段；与内置默认合并后写入 API system。 */
-  systemPromptExtra: string
+  models: ModelPreset[]
+  /** 当前选中的 modelId */
+  currentModelId: string
 }

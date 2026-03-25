@@ -24,7 +24,7 @@ function segmentKey(seg: ChatSegment, index: number): string {
 
 <template>
   <div
-    class="chat-md-assistant prose prose-stone prose-sm max-w-none dark:prose-invert prose-headings:font-semibold prose-a:text-orange-600 dark:prose-a:text-orange-400 space-y-4"
+    class="chat-md-assistant prose prose-stone prose-sm max-w-none prose-headings:font-semibold prose-a:text-orange-600 space-y-4"
   >
     <template v-for="(seg, i) in segments" :key="segmentKey(seg, i)">
       <div

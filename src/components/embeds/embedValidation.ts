@@ -1,6 +1,8 @@
 import Ajv, { type ValidateFunction } from 'ajv'
 import { Allow, parse as parsePartialJson } from 'partial-json'
 import type { EmbedMeta } from './embedMeta'
+import { getMetaByPluginDir } from './buildEmbedSystemPrompt'
+import { normalizePartialPropsFromSchema } from './embedPartialFromSchema'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -58,122 +60,48 @@ export function parseEmbedBodyValidated(
   return null
 }
 
-function normalizePartialKpi(o: Record<string, unknown>): Record<string, unknown> {
-  const title =
-    typeof o.title === 'string'
-      ? o.title
-      : o.title !== undefined && o.title !== null
-        ? String(o.title)
-        : '\u2026'
-  const value =
-    typeof o.value === 'string' || typeof o.value === 'number'
-      ? o.value
-      : o.value !== undefined && o.value !== null
-        ? String(o.value)
-        : '\u2026'
-  const hint = typeof o.hint === 'string' ? o.hint : undefined
-  const trend =
-    o.trend === 'up' || o.trend === 'down' || o.trend === 'neutral' ? o.trend : undefined
-  const out: Record<string, unknown> = { title, value }
-  if (hint !== undefined) out.hint = hint
-  if (trend !== undefined) out.trend = trend
-  return out
+type StreamNormFn = (o: Record<string, unknown>) => Record<string, unknown>
+
+/** 可选：某插件目录下 `streamNormalize.ts` 导出 `normalizePartialStreamProps`，覆盖 Schema 自动补齐 */
+const customStreamModules = import.meta.glob<{ normalizePartialStreamProps?: StreamNormFn }>(
+  './*/streamNormalize.ts',
+  { eager: true },
+)
+
+function buildCustomStreamNormalizers(): Map<string, StreamNormFn> {
+  const metaByDir = getMetaByPluginDir()
+  const m = new Map<string, StreamNormFn>()
+  for (const path of Object.keys(customStreamModules)) {
+    const dir = path.match(/^\.\/([^/]+)\/streamNormalize\.ts$/i)?.[1]
+    if (!dir) continue
+    const meta = metaByDir.get(dir)
+    if (!meta) continue
+    const fn = customStreamModules[path].normalizePartialStreamProps
+    if (typeof fn === 'function') {
+      m.set(meta.id, fn)
+    }
+  }
+  return m
 }
 
-function normalizePartialAlert(o: Record<string, unknown>): Record<string, unknown> {
-  const message = typeof o.message === 'string' ? o.message : '\u2026'
-  const title = typeof o.title === 'string' ? o.title : undefined
-  const variant =
-    o.variant === 'info' ||
-    o.variant === 'success' ||
-    o.variant === 'warning' ||
-    o.variant === 'error'
-      ? o.variant
-      : undefined
-  const out: Record<string, unknown> = { message }
-  if (title !== undefined) out.title = title
-  if (variant !== undefined) out.variant = variant
-  return out
-}
+const customStreamNormalizers = buildCustomStreamNormalizers()
 
-function normalizePartialDataTable(o: Record<string, unknown>): Record<string, unknown> {
-  type Col = { key: string; label: string }
-  const columns: Col[] = []
-  const rawCols = o.columns
-  if (Array.isArray(rawCols)) {
-    for (const c of rawCols) {
-      if (c && typeof c === 'object' && !Array.isArray(c)) {
-        const row = c as Record<string, unknown>
-        if (typeof row.key === 'string' && typeof row.label === 'string') {
-          columns.push({ key: row.key, label: row.label })
-        }
-      }
-    }
+function getSchemaByEmbedId(id: string): Record<string, unknown> | undefined {
+  for (const meta of getMetaByPluginDir().values()) {
+    if (meta.id === id) return meta.schema
   }
-  if (columns.length === 0) {
-    columns.push({ key: '_', label: '\u2026' })
-  }
-  const rows: Record<string, unknown>[] = []
-  const rawRows = o.rows
-  if (Array.isArray(rawRows)) {
-    for (const r of rawRows) {
-      if (r && typeof r === 'object' && !Array.isArray(r)) {
-        rows.push(r as Record<string, unknown>)
-      }
-    }
-  }
-  return { columns, rows }
-}
-
-function normalizePartialEcharts(o: Record<string, unknown>): Record<string, unknown> {
-  const title = typeof o.title === 'string' ? o.title : undefined
-  let height: number | undefined
-  if (typeof o.height === 'number' && o.height >= 120 && o.height <= 900) {
-    height = o.height
-  }
-  let option: Record<string, unknown> = {}
-  if (o.option && typeof o.option === 'object' && !Array.isArray(o.option)) {
-    try {
-      option = JSON.parse(JSON.stringify(o.option)) as Record<string, unknown>
-    } catch {
-      option = {}
-    }
-  }
-  if (Object.keys(option).length === 0) {
-    option = {
-      title: {
-        text: '\u2026',
-        left: 'center',
-        top: 'middle',
-        textStyle: { color: '#a8a29e', fontSize: 14 },
-      },
-      xAxis: { type: 'category', show: false, data: [] },
-      yAxis: { type: 'value', show: false },
-      series: [],
-    }
-  }
-  const out: Record<string, unknown> = { option }
-  if (title !== undefined) out.title = title
-  if (height !== undefined) out.height = height
-  return out
+  return undefined
 }
 
 function normalizePartialEmbedProps(
   id: string,
   o: Record<string, unknown>,
 ): Record<string, unknown> | null {
-  switch (id) {
-    case 'kpi':
-      return normalizePartialKpi(o)
-    case 'alert':
-      return normalizePartialAlert(o)
-    case 'data-table':
-      return normalizePartialDataTable(o)
-    case 'echarts':
-      return normalizePartialEcharts(o)
-    default:
-      return null
-  }
+  const custom = customStreamNormalizers.get(id)
+  if (custom) return custom(o)
+  const schema = getSchemaByEmbedId(id)
+  if (!schema) return null
+  return normalizePartialPropsFromSchema(schema, o)
 }
 
 /** 围栏体尚为空或无法走 partial-json 时，与各插件流式占位一致的 props */

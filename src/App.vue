@@ -11,8 +11,12 @@ import ChatMessageList from "./components/ChatMessageList.vue";
 import ChatInput from "./components/ChatInput.vue";
 
 const settingsStore = useChatSettingsStore();
-const { settingsOpen, configInvalid, normalizedBaseUrl, model } =
-  storeToRefs(settingsStore);
+const {
+  settingsOpen,
+  configInvalid,
+  normalizedBaseUrl,
+  currentApiModel: model,
+} = storeToRefs(settingsStore);
 
 const { messages, streaming, sendMessage, stop, clearChat } = useChat();
 
@@ -22,7 +26,7 @@ async function onSend(text: string): Promise<void> {
     return;
   }
   if (!model.value.trim()) {
-    window.alert("请填写 Model");
+    window.alert("请在模型配置中选择或添加至少一个 model");
     return;
   }
   await sendMessage(text);

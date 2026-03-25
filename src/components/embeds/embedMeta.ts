@@ -1,6 +1,9 @@
 /**
  * 与每个插件目录下 meta.json 对应的类型。
  * 组件入参由 JSON Schema 描述，并与围栏内 JSON、Ajv 校验一致。
+ *
+ * 流式场景：`embedPartialFromSchema` 会按 schema 补齐必填与 minItems；可选字段可写 `default`。
+ * 复杂情况可在同目录增加 `streamNormalize.ts` 导出 `normalizePartialStreamProps`。
  */
 export interface EmbedMeta {
   /** 围栏第一行的语言名（建议与插件目录名一致） */

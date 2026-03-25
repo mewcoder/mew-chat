@@ -1,3 +1,9 @@
+/**
+ * 插件约定（新建子文件夹即可，无需改本文件或 embedValidation 的 switch）：
+ * - `你的插件/index.vue`：默认导出组件，props 与 meta.json 的 schema 一致
+ * - `你的插件/meta.json`：id / title / schema / …（见 EmbedMeta）
+ * - 可选 `你的插件/streamNormalize.ts`：导出 `normalizePartialStreamProps`，覆盖流式场景的 Schema 自动补齐
+ */
 import type { Component } from 'vue'
 import type { EmbedMeta } from './embedMeta'
 import { getMetaByPluginDir } from './buildEmbedSystemPrompt'

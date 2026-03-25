@@ -1,13 +1,13 @@
 <template>
   <div
-    class="relative flex h-dvh flex-col overflow-hidden bg-[#faf8f5] text-stone-800 dark:bg-[#1c1917] dark:text-stone-200"
+    class="relative flex h-dvh flex-col overflow-hidden bg-[#faf8f5] text-stone-800"
   >
     <div
-      class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_100%_55%_at_50%_-8%,rgba(251,146,60,0.11),transparent_55%)] dark:bg-[radial-gradient(ellipse_100%_50%_at_50%_-5%,rgba(251,146,60,0.08),transparent_50%)]"
+      class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_100%_55%_at_50%_-8%,rgba(251,146,60,0.11),transparent_55%)]"
       aria-hidden="true"
     />
     <div
-      class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(120,113,108,0.04)_100%)] dark:bg-[linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.25)_100%)]"
+      class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(120,113,108,0.04)_100%)]"
       aria-hidden="true"
     />
     <div class="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col">

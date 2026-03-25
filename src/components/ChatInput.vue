@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import { ref, watch, nextTick, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useChatSettingsStore } from '../stores/chatSettings'
+
+const settingsStore = useChatSettingsStore()
+const { models, currentModelId, currentPreset } = storeToRefs(settingsStore)
 
 const props = defineProps<{
   disabled: boolean
@@ -45,23 +50,48 @@ function onKeydown(e: KeyboardEvent): void {
     onSend()
   }
 }
+
+function switchModel(id: string): void {
+  settingsStore.selectModelPreset(id)
+}
 </script>
 
 <template>
   <div
-    class="border-t border-stone-200/70 bg-[#faf8f5]/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl dark:border-stone-700/70 dark:bg-[#1c1917]/85"
+    class="border-t border-stone-200/70 bg-[#faf8f5]/85 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
   >
     <div class="mx-auto max-w-2xl px-4 pb-5 pt-3 sm:px-5 sm:pb-6 sm:pt-4">
       <div
-        class="flex items-end gap-2 rounded-lg border border-stone-200/80 bg-white/95 p-1.5 shadow-ui-md ring-1 ring-black/[0.03] transition-[box-shadow,border-color] focus-within:border-orange-300/60 focus-within:shadow-ui-lg focus-within:ring-2 focus-within:ring-orange-200/50 dark:border-stone-600 dark:bg-stone-900/95 dark:ring-white/[0.06] dark:focus-within:border-orange-600/50 dark:focus-within:ring-orange-900/35 sm:gap-3 sm:p-2"
+        class="flex items-end gap-2 rounded-lg border border-stone-200/80 bg-white/95 p-1.5 shadow-ui-md ring-1 ring-black/[0.03] transition-[box-shadow,border-color] focus-within:border-orange-300/60 focus-within:shadow-ui-lg focus-within:ring-2 focus-within:ring-orange-200/50 sm:gap-3 sm:p-2"
       >
+        <div class="relative shrink-0 self-end pb-1 sm:pb-1.5">
+          <select
+            :value="currentModelId"
+            :disabled="streaming || disabled"
+            aria-label="选择模型"
+            :title="currentPreset ? `modelId：${currentPreset.modelId}` : undefined"
+            class="h-8 max-w-[6.5rem] cursor-pointer appearance-none truncate rounded-md bg-stone-100/95 py-0 pl-2 pr-6 text-left text-[11px] font-medium text-stone-600 ring-1 ring-stone-200/80 transition hover:bg-stone-100 hover:text-stone-800 hover:ring-stone-300/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-200/70 disabled:cursor-not-allowed disabled:opacity-45 sm:max-w-[8rem] sm:h-9 sm:text-[12px] sm:pl-2.5 sm:pr-7"
+            @change="switchModel(($event.target as HTMLSelectElement).value)"
+          >
+            <option v-for="m in models" :key="m.modelId" :value="m.modelId">{{ m.name }}</option>
+          </select>
+          <svg
+            class="pointer-events-none absolute right-1 top-1/2 size-3 -translate-y-1/2 text-stone-400 sm:right-1.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
         <textarea
           ref="textareaRef"
           v-model="text"
           rows="1"
           :disabled="streaming || disabled"
           placeholder="向 MewChat 发送消息…"
-          class="max-h-48 min-h-[48px] flex-1 resize-none border-0 bg-transparent px-3 py-3 text-[15px] leading-6 text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-0 disabled:opacity-50 dark:text-stone-100 dark:placeholder:text-stone-500"
+          class="max-h-48 min-h-[48px] flex-1 resize-none border-0 bg-transparent px-3 py-3 text-[15px] leading-6 text-stone-800 placeholder:text-stone-400 focus:outline-none focus:ring-0 disabled:opacity-50"
           @keydown="onKeydown"
         />
         <div class="flex shrink-0 flex-wrap items-center gap-1.5 pb-1 pr-0.5 sm:gap-2 sm:pb-1.5 sm:pr-1">
@@ -77,14 +107,14 @@ function onKeydown(e: KeyboardEvent): void {
             v-else
             type="button"
             :disabled="!canSend"
-            class="rounded-lg bg-gradient-to-b from-orange-500 to-orange-600 px-3.5 py-2 text-[13px] font-medium text-white shadow-ui-md transition hover:from-orange-600 hover:to-orange-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:from-stone-200 disabled:to-stone-200 disabled:text-stone-400 disabled:shadow-none dark:disabled:from-stone-600 dark:disabled:to-stone-600 dark:disabled:text-stone-500 sm:px-4"
+            class="rounded-lg bg-gradient-to-b from-orange-500 to-orange-600 px-3.5 py-2 text-[13px] font-medium text-white shadow-ui-md transition hover:from-orange-600 hover:to-orange-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:from-stone-200 disabled:to-stone-200 disabled:text-stone-400 disabled:shadow-none sm:px-4"
             @click="onSend"
           >
             发送
           </button>
           <button
             type="button"
-            class="rounded-lg border border-stone-200/90 bg-stone-50/90 px-2.5 py-2 text-[13px] font-medium text-stone-600 transition hover:border-stone-300 hover:bg-stone-100 dark:border-stone-600 dark:bg-stone-800/80 dark:text-stone-300 dark:hover:bg-stone-700 sm:px-3"
+            class="rounded-lg border border-stone-200/90 bg-stone-50/90 px-2.5 py-2 text-[13px] font-medium text-stone-600 transition hover:border-stone-300 hover:bg-stone-100 sm:px-3"
             @click="emit('clear')"
           >
             清空
@@ -92,7 +122,7 @@ function onKeydown(e: KeyboardEvent): void {
         </div>
       </div>
       <p
-        class="mt-2.5 text-center text-[11px] leading-relaxed text-stone-400/90 dark:text-stone-500"
+        class="mt-2.5 text-center text-[11px] leading-relaxed text-stone-400/90"
       >
         Enter 发送 · Shift+Enter 换行 · MewChat 可能产生不准确信息，请自行核实重要内容。
       </p>

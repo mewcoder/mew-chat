@@ -72,13 +72,26 @@ export interface RenderQueue {
 /** 网络结束时单次出队上限（尽快排空，仍受围栏夹紧约束） */
 const DRAIN_CHUNK_CAP = 4096
 
-/** 积压长度 → 本帧 raw 出队字符数（网络未结束时） */
+const CHARS_BASE = 8
+const LOG_SCALE = 25
+const MAX_CHARS_PER_FRAME = 300
+
+/** 积压长度 → 本帧 raw 出队字符数（网络未结束时）
+ * 
+ * 策略：使用对数曲线平滑加速
+ * - 积压少时慢速打字效果自然
+ * - 积压多时自动加速避免长时间卡顿
+ * - 有上限防止瞬时渲染过重
+ * 
+ * 公式：base + log2(len + 1) * scale
+ * - len=0 时返回 8 字符/帧
+ * - len=2000 时约 8 + log2(2001)*25 ≈ 8 + 11*25 ≈ 283 字符/帧
+ */
 function chunkSizeForBufferLen(len: number, networkDone: boolean): number {
   if (networkDone) return Math.min(len, DRAIN_CHUNK_CAP)
-  if (len > 2000) return 320
-  if (len > 400) return 96
-  if (len > 80) return 28
-  return 10
+
+  const raw = CHARS_BASE + Math.log2(len + 1) * LOG_SCALE
+  return Math.min(Math.round(raw), MAX_CHARS_PER_FRAME)
 }
 
 // ============ 实现 ============

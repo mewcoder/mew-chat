@@ -1,0 +1,64 @@
+{
+  "id": "chart-line",
+  "order": 6,
+  "title": "折线图",
+  "summary": "适用于：趋势、时序、按时间或有序类目变化。与柱状图相同使用 `items`（`name` + `value`，横轴按数组顺序）；可选 `unit`、`smooth`、`area`。",
+  "schema": {
+    "type": "object",
+    "required": ["items"],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "可选：图表上方说明标题"
+      },
+      "height": {
+        "type": "number",
+        "minimum": 120,
+        "maximum": 900,
+        "description": "图表区域高度（像素），默认 320"
+      },
+      "unit": {
+        "type": "string",
+        "description": "可选：纵轴名称，如「人次」「℃」"
+      },
+      "smooth": {
+        "type": "boolean",
+        "default": true,
+        "description": "是否平滑曲线，默认 true"
+      },
+      "area": {
+        "type": "boolean",
+        "description": "是否显示面积填充（浅色），默认 false"
+      },
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "required": ["name", "value"],
+          "additionalProperties": false,
+          "properties": {
+            "name": { "type": "string", "description": "横轴标签（如日期、阶段）" },
+            "value": { "type": "number", "description": "该点的数值" }
+          }
+        }
+      }
+    }
+  },
+  "example": {
+    "title": "近五日访问趋势",
+    "height": 280,
+    "unit": "次",
+    "smooth": true,
+    "area": true,
+    "items": [
+      { "name": "周一", "value": 120 },
+      { "name": "周二", "value": 182 },
+      { "name": "周三", "value": 151 },
+      { "name": "周四", "value": 234 },
+      { "name": "周五", "value": 290 }
+    ]
+  },
+  "routingHint": "用户要「折线图」「趋势」「变化曲线」「时序」→ 用 chart-line 输出有序的 items；强调面积趋势可设 area: true。"
+}
