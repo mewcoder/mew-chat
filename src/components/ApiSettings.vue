@@ -2,14 +2,15 @@
 import { watch, onMounted, onUnmounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useChatSettingsStore } from '../stores/chatSettings'
-import { DEFAULT_SYSTEM_PROMPT } from '../constants/embedSystemPrompt'
 
 const store = useChatSettingsStore()
-const { settingsOpen, baseUrl, apiKey, model, systemPrompt, useStream } = storeToRefs(store)
-
-function insertDefaultSystemPrompt(): void {
-  systemPrompt.value = DEFAULT_SYSTEM_PROMPT
-}
+const {
+  settingsOpen,
+  baseUrl,
+  apiKey,
+  model,
+  systemPromptExtra,
+} = storeToRefs(store)
 
 function close(): void {
   settingsOpen.value = false
@@ -123,40 +124,19 @@ onUnmounted(() => {
             />
           </label>
           <div class="block">
-            <div class="mb-1.5 flex flex-wrap items-center justify-between gap-2">
-              <span class="text-[12px] font-medium text-stone-500 dark:text-stone-400"
-                >系统提示</span
-              >
-              <button
-                type="button"
-                class="shrink-0 rounded-md border border-stone-200 bg-white px-2.5 py-1 text-[11px] font-medium text-stone-600 transition hover:bg-stone-50 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-300 dark:hover:bg-stone-700/80"
-                @click="insertDefaultSystemPrompt"
-              >
-                插入内置说明（KPI / 表格 / 提示条）
-              </button>
-            </div>
+            <span class="mb-1.5 block text-[12px] font-medium text-stone-500 dark:text-stone-400"
+              >额外系统说明（可选）</span
+            >
             <p class="mb-2 text-[11px] leading-relaxed text-stone-500 dark:text-stone-400">
-              内置说明会告诉模型：在合适时用围栏
-              <code class="rounded bg-stone-100 px-1 py-0.5 font-mono text-[10px] dark:bg-stone-700">kpi</code>、
-              <code class="rounded bg-stone-100 px-1 py-0.5 font-mono text-[10px] dark:bg-stone-700">data-table</code>、
-              <code class="rounded bg-stone-100 px-1 py-0.5 font-mono text-[10px] dark:bg-stone-700">alert</code>
-              ，这样你问「做个表」「给个指标」「提醒一下」时，回复才能被渲染成组件。
+              应用内置默认系统说明会在每次请求中自动附加；此处仅填写你需要追加的规则或偏好，不会回显完整默认文案。
             </p>
             <textarea
-              v-model="systemPrompt"
-              rows="10"
-              placeholder="可留空；建议点击上方按钮插入内置说明。"
+              v-model="systemPromptExtra"
+              rows="4"
+              placeholder="例如：回答尽量简短；涉及金额一律用人民币。"
               class="w-full resize-y rounded-lg border border-stone-200 bg-white px-3 py-2.5 text-sm leading-relaxed text-stone-800 shadow-ui-sm transition focus:border-orange-300 focus:outline-none focus:ring-2 focus:ring-orange-200/60 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-100 dark:focus:border-orange-700 dark:focus:ring-orange-900/40"
             />
           </div>
-          <label class="flex cursor-pointer items-center gap-2.5">
-            <input
-              v-model="useStream"
-              type="checkbox"
-              class="size-4 rounded-sm border-stone-300 text-orange-600 focus:ring-2 focus:ring-orange-300/50 dark:border-stone-500 dark:text-orange-500 dark:focus:ring-orange-800/40"
-            />
-            <span class="text-sm text-stone-700 dark:text-stone-300">流式输出（SSE）</span>
-          </label>
         </div>
         <div
           class="flex shrink-0 justify-end gap-2 border-t border-stone-200/80 px-5 py-4 dark:border-stone-700"

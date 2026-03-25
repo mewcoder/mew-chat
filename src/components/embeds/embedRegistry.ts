@@ -1,7 +1,11 @@
 import type { Component } from 'vue'
 import type { EmbedMeta } from './embedMeta'
 import { getMetaByPluginDir } from './buildEmbedSystemPrompt'
-import { compileEmbedValidators, parseEmbedForStream } from './embedValidation'
+import {
+  compileEmbedValidators,
+  parseEmbedForStream,
+  streamEmbedPlaceholderProps,
+} from './embedValidation'
 
 const vueModules = import.meta.glob('./*/index.vue', { eager: true }) as Record<
   string,
@@ -49,6 +53,8 @@ export function parseEmbedFence(
 ): { name: string; props: Record<string, unknown>; partial?: boolean } | null {
   if (!embedFenceLangs.has(lang)) return null
   const out = parseEmbedForStream(lang, body, validators)
-  if (!out) return null
-  return { name: lang, props: out.props, partial: out.partial }
+  if (out) return { name: lang, props: out.props, partial: out.partial }
+  const fb = streamEmbedPlaceholderProps(lang)
+  if (fb) return { name: lang, props: fb.props, partial: true }
+  return { name: lang, props: {}, partial: true }
 }

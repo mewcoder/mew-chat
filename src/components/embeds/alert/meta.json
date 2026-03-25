@@ -20,7 +20,7 @@
       "variant": {
         "type": "string",
         "enum": ["info", "success", "warning", "error"],
-        "description": "样式；省略时前端按 info 处理"
+        "description": "强调色：success/warning/error；省略或 info 为中性底"
       }
     }
   },

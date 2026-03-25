@@ -141,6 +141,15 @@ function normalizePartialEmbedProps(
   }
 }
 
+/** 围栏体尚为空或无法走 partial-json 时，与各插件流式占位一致的 props */
+export function streamEmbedPlaceholderProps(
+  id: string,
+): { props: Record<string, unknown>; partial: boolean } | null {
+  const p = normalizePartialEmbedProps(id, {})
+  if (!p) return null
+  return { props: p, partial: true }
+}
+
 /**
  * 先尝试完整 JSON + Schema；失败则用 partial-json 解析流式片段并规范为可绑定的 props。
  * 若规范结果已满足 Schema，则视为完整（partial: false）。
@@ -151,7 +160,9 @@ export function parseEmbedForStream(
   validators: Map<string, ValidateFunction>,
 ): { props: Record<string, unknown>; partial: boolean } | null {
   const trimmed = body.trim()
-  if (!trimmed) return null
+  if (!trimmed) {
+    return streamEmbedPlaceholderProps(id)
+  }
 
   const full = parseEmbedBodyValidated(id, body, validators)
   if (full) {

@@ -9,6 +9,6 @@ export interface ChatSettingsState {
   baseUrl: string
   apiKey: string
   model: string
-  systemPrompt: string
-  useStream: boolean
+  /** 仅用户追加片段；与内置默认合并后写入 API system。 */
+  systemPromptExtra: string
 }

@@ -18,8 +18,6 @@ export type ChatSegment =
       /** 流式输出中 props 由 partial-json 推断，尚未通过完整 Schema */
       partial?: boolean
     }
-  /** 围栏内容尚无法解析（如仅空白） */
-  | { type: 'embed-pending'; lang: string }
 
 function fenceLang(token: Token): string {
   return (token.info || '').trim().split(/\s+/)[0] ?? ''
@@ -46,18 +44,14 @@ export function parseChatMarkdown(src: string): ChatSegment[] {
     if (t.type === 'fence') {
       const lang = fenceLang(t)
       if (embedFenceLangs.has(lang)) {
-        const parsed = parseEmbedFence(lang, t.content)
+        const parsed = parseEmbedFence(lang, t.content)!
         flushBuffer()
-        if (parsed) {
-          segments.push({
-            type: 'embed',
-            name: parsed.name,
-            props: parsed.props,
-            partial: parsed.partial,
-          })
-        } else {
-          segments.push({ type: 'embed-pending', lang })
-        }
+        segments.push({
+          type: 'embed',
+          name: parsed.name,
+          props: parsed.props,
+          partial: parsed.partial,
+        })
         continue
       }
     }

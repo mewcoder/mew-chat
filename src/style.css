@@ -100,3 +100,45 @@ body {
 .chat-md-fragment :last-child {
   margin-bottom: 0;
 }
+
+/* 行内 code：去掉 typography/prose 默认的伪元素反引号，改为轻量标签样式 */
+.chat-md-assistant :where(code):not(:where(pre *))::before,
+.chat-md-assistant :where(code):not(:where(pre *))::after {
+  content: none;
+}
+
+.chat-md-assistant :where(code):not(:where(pre *)) {
+  font-family: ui-monospace, 'Cascadia Code', 'Sarasa Mono SC', 'Noto Sans Mono CJK SC', monospace;
+  font-size: 0.88em;
+  font-weight: 500;
+  font-variant-ligatures: none;
+  color: oklch(0.35 0.02 50);
+  background-color: oklch(0.965 0.006 75);
+  border: 1px solid oklch(0.9 0.01 75);
+  border-radius: 0.25rem;
+  padding: 0.08em 0.35em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-md-assistant :where(code):not(:where(pre *)) {
+    color: oklch(0.9 0.02 75);
+    background-color: oklch(0.28 0.02 55);
+    border-color: oklch(0.4 0.02 55);
+  }
+}
+
+.chat-md-assistant pre code {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-variant-ligatures: inherit;
+  color: inherit;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-decoration-break: unset;
+  -webkit-box-decoration-break: unset;
+}

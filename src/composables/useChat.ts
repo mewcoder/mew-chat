@@ -2,6 +2,11 @@ import { ref, type Ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import type { ChatMessage } from '../types/chat'
 import { useChatSettingsStore } from '../stores/chatSettings'
+import {
+  createRenderQueue,
+  withRenderQueue,
+  type RenderQueue,
+} from '../utils/renderQueue'
 
 // ---------------------------------------------------------------------------
 // 与 OpenAI 兼容的 Chat Completions API（/v1/chat/completions）
@@ -12,11 +17,6 @@ const HTTP_ERROR_BODY_MAX_LEN = 500
 
 interface ChatCompletionErrorJson {
   error?: { message?: string }
-}
-
-/** 非流式：完整 JSON 响应 */
-interface ChatCompletionJsonBody {
-  choices?: Array<{ message?: { content?: string } }>
 }
 
 /** 流式：单行 SSE data 解析后的结构 */
@@ -124,11 +124,6 @@ async function consumeChatCompletionSse(
   }
 }
 
-async function readNonStreamAssistantText(response: Response): Promise<string> {
-  const data = (await response.json()) as ChatCompletionJsonBody
-  return data.choices?.[0]?.message?.content ?? ''
-}
-
 interface ChatCompletionRequestParams {
   baseUrl: string
   apiKey: string
@@ -136,13 +131,13 @@ interface ChatCompletionRequestParams {
   /** 当前会话（含末尾空 assistant 占位） */
   thread: ChatMessage[]
   systemPrompt: string
-  useStream: boolean
   signal: AbortSignal
   onTextDelta: (chunk: string) => void
 }
 
 /**
- * POST /v1/chat/completions；中止时不抛错（与 fetch 的 AbortError 行为一致）。
+ * POST /v1/chat/completions（流式 SSE）
+ * 中止时不抛错（与 fetch 的 AbortError 行为一致）
  */
 async function requestChatCompletion(
   params: ChatCompletionRequestParams,
@@ -153,7 +148,6 @@ async function requestChatCompletion(
     model,
     thread,
     systemPrompt,
-    useStream,
     signal,
     onTextDelta,
   } = params
@@ -171,19 +165,13 @@ async function requestChatCompletion(
       body: JSON.stringify({
         model: model.trim(),
         messages,
-        stream: useStream,
+        stream: true,
       }),
       signal,
     })
 
     if (!response.ok) {
       throw new Error(await readHttpErrorMessage(response))
-    }
-
-    if (!useStream) {
-      const text = await readNonStreamAssistantText(response)
-      if (text) onTextDelta(text)
-      return
     }
 
     await consumeChatCompletionSse(response.body, onTextDelta, signal)
@@ -225,15 +213,22 @@ function setAssistantErrorAt(
 
 export function useChat() {
   const settingsStore = useChatSettingsStore()
-  const { normalizedBaseUrl, apiKey, model, systemPrompt, useStream } =
-    storeToRefs(settingsStore)
+  const {
+    normalizedBaseUrl,
+    apiKey,
+    model,
+    effectiveSystemPrompt,
+  } = storeToRefs(settingsStore)
 
   const messages = ref<ChatMessage[]>([])
   const streaming = ref(false)
 
   let abortController: AbortController | null = null
+  let activeRenderQueue: RenderQueue | null = null
 
   function stop(): void {
+    activeRenderQueue?.dispose()
+    activeRenderQueue = null
     abortController?.abort()
     abortController = null
     streaming.value = false
@@ -249,22 +244,29 @@ export function useChat() {
     const { signal } = abortController
     streaming.value = true
 
+    const renderQueue = createRenderQueue(
+      (chunk) => appendToAssistantAt(messages, assistantIndex, chunk),
+    )
+    activeRenderQueue = renderQueue
+
     try {
-      await requestChatCompletion({
-        baseUrl: normalizedBaseUrl.value,
-        apiKey: apiKey.value,
-        model: model.value,
-        thread: messages.value,
-        systemPrompt: systemPrompt.value,
-        useStream: useStream.value,
-        signal,
-        onTextDelta(chunk) {
-          appendToAssistantAt(messages, assistantIndex, chunk)
-        },
-      })
+      await withRenderQueue(renderQueue, () =>
+        requestChatCompletion({
+          baseUrl: normalizedBaseUrl.value,
+          apiKey: apiKey.value,
+          model: model.value,
+          thread: messages.value,
+          systemPrompt: effectiveSystemPrompt.value,
+          signal,
+          onTextDelta(chunk) {
+            renderQueue.push(chunk)
+          },
+        }),
+      )
     } catch (error) {
       setAssistantErrorAt(messages, assistantIndex, error)
     } finally {
+      activeRenderQueue = null
       streaming.value = false
       abortController = null
     }

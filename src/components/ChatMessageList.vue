@@ -4,8 +4,6 @@ import ChatMessageRenderer from './ChatMessageRenderer.vue'
 
 defineProps<{
   messages: ChatMessage[]
-  /** 是否正在流式接收（用于助手消息内 embed 占位文案） */
-  streaming?: boolean
 }>()
 </script>
 
@@ -27,7 +25,7 @@ defineProps<{
           在下方输入消息即可发送。首次使用请点击右上角「模型配置」。
         </p>
         <p class="max-w-md text-[13px] leading-relaxed text-stone-500 dark:text-stone-400">
-          若要在回复里出现<strong class="font-medium text-stone-600 dark:text-stone-300">指标卡、数据表、提示条</strong>，请在配置里点击「插入内置说明」。可尝试提问：例如「用表格列三条待办」「给一个今日订单的指标」「用警告样式提醒配额」。
+          如需追加个性化规则，可在「模型配置」中填写额外系统说明。
         </p>
       </div>
     </div>
@@ -43,12 +41,7 @@ defineProps<{
           <div class="whitespace-pre-wrap break-words">{{ msg.content }}</div>
         </div>
         <div v-else class="w-full break-words text-[15px] leading-7 text-stone-800 dark:text-stone-200">
-          <ChatMessageRenderer
-            :content="msg.content"
-            :streaming-assistant="
-              !!streaming && idx === messages.length - 1 && msg.role === 'assistant'
-            "
-          />
+          <ChatMessageRenderer :content="msg.content" />
         </div>
       </div>
     </div>
