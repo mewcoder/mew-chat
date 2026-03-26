@@ -1,8 +1,8 @@
 {
   "id": "chart-bar",
-  "order": 5,
+  "order": 11,
   "title": "柱状图",
-  "summary": "适用于：分类对比、简单排行、按天/周统计。仅需 `items`（`name` + `value`），纵轴名称可用 `unit`；无需 ECharts option。",
+  "summary": "适用于：条线/品类对比、完成量排行、按日周月聚合统计。仅需 `items`（`name` + `value`）；横向对比设 horizontal: true。",
   "schema": {
     "type": "object",
     "required": ["items"],
@@ -53,5 +53,5 @@
       { "name": "周五", "value": 210 }
     ]
   },
-  "routingHint": "用户要「柱状图」「条形图」「对比柱子」「按类目统计」→ 用 chart-bar 输出 items；横向对比可设 horizontal: true。"
+  "routingHint": "类目对比、排行柱状/条形 → chart-bar；时间序列走势 → chart-line。"
 }

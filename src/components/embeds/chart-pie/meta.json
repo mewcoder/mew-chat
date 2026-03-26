@@ -1,8 +1,8 @@
 {
   "id": "chart-pie",
-  "order": 4,
+  "order": 10,
   "title": "饼图",
-  "summary": "适用于：构成、占比、预算分摊。仅需 `items` 数组（`name` + `value`），无需编写 ECharts option；外观与柱状图插件统一。",
+  "summary": "适用于：部门业绩占比、费用结构、渠道构成等；仅需 `items`（`name` + `value`），无需 ECharts option。",
   "schema": {
     "type": "object",
     "required": ["items"],
@@ -47,5 +47,5 @@
       { "name": "外链", "value": 154 }
     ]
   },
-  "routingHint": "用户要「饼图」「占比」「构成比例」→ 用 chart-pie 围栏输出 items，勿再用通用 echarts option。"
+  "routingHint": "占比、构成、结构分布 → chart-pie（可 donut: true 环形）；趋势用 chart-line。"
 }

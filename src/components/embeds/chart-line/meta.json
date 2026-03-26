@@ -1,8 +1,8 @@
 {
   "id": "chart-line",
-  "order": 6,
+  "order": 12,
   "title": "折线图",
-  "summary": "适用于：趋势、时序、按时间或有序类目变化。与柱状图相同使用 `items`（`name` + `value`，横轴按数组顺序）；可选 `unit`、`smooth`、`area`。",
+  "summary": "适用于：DAU/交易量趋势、SLA 达标率变化、按时间或阶段的变化曲线。`items` 顺序即横轴；可选 `smooth`、`area` 强调趋势。",
   "schema": {
     "type": "object",
     "required": ["items"],
@@ -60,5 +60,5 @@
       { "name": "周五", "value": 290 }
     ]
   },
-  "routingHint": "用户要「折线图」「趋势」「变化曲线」「时序」→ 用 chart-line 输出有序的 items；强调面积趋势可设 area: true。"
+  "routingHint": "时序、趋势线、阶段变化 → chart-line；静态分类对比 → chart-bar。"
 }

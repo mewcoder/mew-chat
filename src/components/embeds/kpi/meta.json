@@ -1,8 +1,8 @@
 {
   "id": "kpi",
   "order": 1,
-  "title": "指标卡",
-  "summary": "适用于：今日订单量、活跃用户数、同比等单指标展示。",
+  "title": "指标卡（单指标）",
+  "summary": "适用于：中后台单指标强调展示，如「待我审批」数量、部门今日工单、同比等；同一回答里多个并列数字请优先 metric-grid。",
   "schema": {
     "type": "object",
     "required": ["title", "value"],
@@ -33,5 +33,5 @@
     "hint": "较昨日 +12%",
     "trend": "up"
   },
-  "routingHint": "用户说「关键指标」「今日数据」「大屏数字」→ 用 kpi。"
+  "routingHint": "只展示一个核心数且需要卡片强调（如「待审批 14 单」）→ kpi；多个并排数字 → metric-grid。"
 }

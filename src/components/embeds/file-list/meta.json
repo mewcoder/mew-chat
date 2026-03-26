@@ -1,0 +1,49 @@
+{
+  "id": "file-list",
+  "order": 9,
+  "title": "文件列表",
+  "summary": "适用于：工单附件、审批材料、导出任务结果等纯展示文件名与元信息（大小、类型、说明），不提供真实下载链接也可用于占位。",
+  "schema": {
+    "type": "object",
+    "required": ["items"],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "可选：如「附件（3）」"
+      },
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "required": ["name"],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "文件名或可识别标题"
+            },
+            "meta": {
+              "type": "string",
+              "description": "可选：如「1.2 MB · PDF」「上传于今天」"
+            },
+            "tone": {
+              "type": "string",
+              "enum": ["default", "success", "warning", "danger", "info"],
+              "description": "可选：行左侧语义条，默认 default"
+            }
+          }
+        }
+      }
+    }
+  },
+  "example": {
+    "title": "附件",
+    "items": [
+      { "name": "合同扫描件.pdf", "meta": "2.1 MB", "tone": "default" },
+      { "name": "补充说明.docx", "meta": "待法务确认", "tone": "warning" }
+    ]
+  },
+  "routingHint": "列举材料/导出文件/附件名 → file-list；只是正文里一两个链接用 Markdown 即可。"
+}

@@ -1,0 +1,61 @@
+{
+  "id": "timeline",
+  "order": 7,
+  "title": "时间线",
+  "summary": "适用于：审批记录、操作日志、工单流转按时间倒序或正序展示。每项含时间与标题，可选补充说明。",
+  "schema": {
+    "type": "object",
+    "required": ["items"],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "可选：整块标题，如「处理记录」"
+      },
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "required": ["time", "title"],
+          "additionalProperties": false,
+          "properties": {
+            "time": {
+              "type": "string",
+              "description": "时间或日期文案，如「2026-03-25 14:02」"
+            },
+            "title": {
+              "type": "string",
+              "description": "节点标题，如「财务审核通过」"
+            },
+            "detail": {
+              "type": "string",
+              "description": "可选补充，如操作人、备注"
+            }
+          }
+        }
+      }
+    }
+  },
+  "example": {
+    "title": "审批记录",
+    "items": [
+      {
+        "time": "2026-03-25 09:10",
+        "title": "提交申请",
+        "detail": "张三 · 采购部"
+      },
+      {
+        "time": "2026-03-25 11:40",
+        "title": "直属领导同意",
+        "detail": "李四"
+      },
+      {
+        "time": "2026-03-25 14:02",
+        "title": "待财务复审",
+        "detail": "预计 1 个工作日内完成"
+      }
+    ]
+  },
+  "routingHint": "按时间排列的事件、日志、流转节点 → timeline；若只需说明当前阶段，用 Markdown 小标题或 tag-row 即可。"
+}

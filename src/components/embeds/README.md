@@ -48,4 +48,4 @@ export function normalizePartialStreamProps(
 
 ## 参考现有插件
 
-`kpi`、`data-table`、`chart-pie`、`chart-bar`、`chart-line` 等子目录即为完整示例；复杂表格与图表均以 Schema + 默认补齐为主，未单独使用 `streamNormalize.ts`。
+内置以**中后台**常用展示为主：`kpi`、`metric-grid`、`data-table`、`description-list`、`tag-row`、`notice-bar`、`timeline`（时间线）、`file-list`（附件列表），以及 `chart-line` / `chart-bar` / `chart-pie`。均以 Schema + 默认补齐为主，未单独使用 `streamNormalize.ts`。

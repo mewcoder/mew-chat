@@ -1,0 +1,33 @@
+{
+  "id": "notice-bar",
+  "order": 6,
+  "title": "提示条",
+  "summary": "适用于：系统公告、表单校验摘要、合规/风险提示、操作结果引导等横幅提示，不配长正文。",
+  "schema": {
+    "type": "object",
+    "required": ["message"],
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "可选小标题，如「注意」"
+      },
+      "message": {
+        "type": "string",
+        "description": "主文案，建议一两句"
+      },
+      "level": {
+        "type": "string",
+        "enum": ["info", "success", "warning", "error"],
+        "default": "info",
+        "description": "严重程度/语义色"
+      }
+    }
+  },
+  "example": {
+    "title": "合规提示",
+    "level": "warning",
+    "message": "导出含个人信息字段，请确认已获得授权并按公司数据分级制度留存。"
+  },
+  "routingHint": "用户要「页面顶提示」「风险提示」「成功/失败横幅」→ 用 notice-bar；多段说明仍用普通 Markdown。"
+}

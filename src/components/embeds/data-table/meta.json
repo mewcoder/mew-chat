@@ -1,8 +1,8 @@
 {
   "id": "data-table",
-  "order": 2,
+  "order": 3,
   "title": "数据表",
-  "summary": "适用于：任务列表、订单明细、对比多行数据。",
+  "summary": "适用于：工单/订单/用户等列表、导出预览、多行多列对比；纯键值详情用 description-list。",
   "schema": {
     "type": "object",
     "required": ["columns", "rows"],
@@ -48,5 +48,5 @@
       { "name": "对账", "status": "已完成" }
     ]
   },
-  "routingHint": "用户说「用表格列出」「做个表」「对比这几项」→ 用 data-table。"
+  "routingHint": "多行结构化列表、报表、运维明细 → data-table；两列字段只读 → description-list。"
 }
