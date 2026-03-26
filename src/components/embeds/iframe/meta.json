@@ -1,0 +1,36 @@
+{
+  "id": "iframe",
+  "order": 60,
+  "title": "内嵌页面（HTML / 互动）",
+  "summary": "用于 AI 生成的整页或片段 HTML：iframe 内为固定「壳页」，父组件通过 postMessage 推送当前 HTML 字符串写入 #chatbox-iframe-root，流式输出时不再整页重载 srcdoc。壳层已注入与主站一致的主题 CSS 变量与正文字体；高度由子页 postMessage 同步。完整文档会拆成 body 内 HTML + head 内 `<style>` 注入。**需要画图演示、几何/函数图像、流程示意、简单动画或交互白板类展示时，应优先用本围栏自造 HTML**（SVG / Canvas + 可选脚本），而不是只写文字描述；有明确行列数据的统计图仍用 `chart-bar` 等专用围栏。大段 HTML 推荐围栏内直接写原文（不以 { 开头）；要标题等元数据时用 JSON 且以 { 开头。",
+  "authoringHints": "**`iframe` 内 HTML 视觉规范（须与聊天页暖色纸感、橙主色统一）：**\n\n1. **色板**：页面背景优先 `background: var(--surface)`（暖纸色 #faf8f5）或保持透明以融入对话区；卡片、面板、输入区衬底用 `var(--surface-elevated)`（白）。主强调、主按钮、重要链接、图表主色使用 `var(--accent)`（橙 #ea580c），hover 可略加深或加下划线。浅橙高亮、选中底可用 `var(--accent-soft)`。正文主色与壳层一致为深石色（约 `#1c1917`），次要说明用略浅灰石色。分割线/边框用低对比，如 `border: 1px solid rgb(28 25 23 / 0.12)`。\n\n2. **字体与排版**：勿覆盖 `body` 字体栈；标题用 `h1`–`h3`，`font-weight: 600`，级差清晰；正文 `line-height: 1.5`–`1.6`；小字说明可用 `font-size: 12px`–`13px`。与助手 Markdown 区「prose-stone、小号正文」气质一致即可。\n\n3. **组件感**：卡片、提示块使用 `border-radius: 0.75rem`（约 12px）；需要抬升时使用 `box-shadow: var(--shadow-ui-sm)`，勿用过重黑色大阴影。\n\n4. **避免**：高饱和霓虹、纯黑深色 IDE 风整页背景、大面积与橙主色冲突的冷紫/品红底；非必要不要用 `min-height: 100vh` 撑满视口（高度由容器随内容增高）。\n\n5. **样式写法**：完整文档时把样式放在 `<head>` 的 `<style>` 中；仅片段时用根元素 class 或局部 `<style>`。**尽量使用上述 CSS 变量**，少写硬编码色值。\n\n6. **脚本**：可在 body 内使用 `<script>` 做简单互动；勿访问父窗口。外链脚本若不可用请改为内联小脚本。\n\n7. **画图与演示**：几何图形、坐标系、函数曲线、流程图、示意图等用 **内联 SVG**（`stroke`/`fill` 优先 `var(--accent)`、`currentColor` 或与石色阶协调的灰）或 **Canvas 2D** 绘制；需要拖拽、滑块改参数、逐步动画时用 `<script>` 更新重绘。保持矢量清晰、线宽适中；若需图例说明放在图旁用小字排版。",
+  "schema": {
+    "type": "object",
+    "required": ["html"],
+    "additionalProperties": false,
+    "properties": {
+      "html": {
+        "type": "string",
+        "description": "完整 HTML 文档或 body 内片段；可含 SVG/Canvas 与脚本以实现画图与演示。须遵守「iframe 内 HTML 视觉规范」，多用 var(--surface)、var(--accent) 等"
+      },
+      "title": {
+        "type": "string",
+        "description": "可选：聊天区卡片标题，同时用于 iframe 可访问性名称"
+      },
+      "minHeight": {
+        "type": "string",
+        "description": "可选：仅设置最小高度下限（如 120px）；默认高度由内容撑开，不设固定视口高"
+      },
+      "allowForms": {
+        "type": "boolean",
+        "description": "是否在 sandbox 中允许表单提交（默认真）",
+        "default": true
+      }
+    }
+  },
+  "example": {
+    "title": "示例页",
+    "html": "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>Demo</title></head><body><p style=\"color:var(--accent)\">Hello</p><script>document.body.insertAdjacentHTML('beforeend','<p>Script OK</p>')</script></body></html>"
+  },
+  "routingHint": "画图演示、几何/函数图像、流程动画、交互示意、自由页面 → iframe（自造 HTML）；**表格化指标数据**仍用 kpi、chart-* 等围栏。"
+}

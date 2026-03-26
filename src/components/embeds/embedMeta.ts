@@ -23,4 +23,9 @@ export interface EmbedMeta {
   example?: Record<string, unknown> | unknown[]
   /** 参与「何时用围栏」汇总的一条规则 */
   routingHint?: string
+  /**
+   * 可选：写入系统提示的撰写规范（Markdown），紧跟在 summary 之后；
+   * 用于 iframe 等需约定生成物风格的插件。
+   */
+  authoringHints?: string
 }

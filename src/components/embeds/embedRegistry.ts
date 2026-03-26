@@ -58,6 +58,15 @@ export function parseEmbedFence(
   body: string,
 ): { name: string; props: Record<string, unknown>; partial?: boolean } | null {
   if (!embedFenceLangs.has(lang)) return null
+
+  /** 大段 HTML 无需 JSON 转义：围栏体不以 `{` 开头则整段视为 html */
+  if (lang === 'iframe') {
+    const trimmed = body.trim()
+    if (trimmed && !trimmed.startsWith('{')) {
+      return { name: lang, props: { html: body }, partial: false }
+    }
+  }
+
   const out = parseEmbedForStream(lang, body, validators)
   if (out) return { name: lang, props: out.props, partial: out.partial }
   const fb = streamEmbedPlaceholderProps(lang)

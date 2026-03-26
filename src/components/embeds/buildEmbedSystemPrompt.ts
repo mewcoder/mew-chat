@@ -54,7 +54,7 @@ export function buildEmbedPromptSections(): string {
 
   const lines: string[] = []
   lines.push(
-    `当用户需要结构化展示时，除普通文字外，可在正文中使用下面 **${metas.length}** 种**围栏**。围栏第一行的语言名必须**完全一致**，围栏内为**满足对应 JSON Schema 的 JSON**，前端校验通过后渲染为组件。`,
+    `当用户需要结构化展示时，除普通文字外，可在正文中使用下面 **${metas.length}** 种**围栏**。围栏第一行的语言名必须**完全一致**。**默认**围栏内为满足对应 JSON Schema 的 JSON；**例外**：插件 \`iframe\` 可为 JSON，或围栏内**直接写 HTML 原文**（整段不以字符 \`{\` 开头，见该节说明）。前端校验通过后渲染为组件。`,
     '',
   )
 
@@ -62,6 +62,10 @@ export function buildEmbedPromptSections(): string {
     const n = index + 1
     lines.push(`## ${n}. ${meta.title} \`${meta.id}\``)
     lines.push(meta.summary)
+    if (meta.authoringHints?.trim()) {
+      lines.push('')
+      lines.push(meta.authoringHints.trim())
+    }
     lines.push(formatSchemaBlock(meta.schema))
     if (meta.example !== undefined) {
       lines.push('')
